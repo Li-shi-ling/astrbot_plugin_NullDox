@@ -55,6 +55,7 @@ class NullDoxPlugin(Star):
             if isinstance(component, Comp.At):
                 target_id = str(component.qq)
                 break
+        logger.debug(f"[Dox]qq:{qq},target_id:{target_id}")
         if not target_id:
             if not self._validate_qq(qq):
                 yield event.plain_result("QQ号格式错误，请使用纯数字")
