@@ -66,13 +66,11 @@ class NullDoxPlugin(Star):
     async def decrease_dox(self, event: AstrMessageEvent):
         group_id = event.get_group_id()
         sender_id = str(event.get_sender_id())
-        sender_name = event.get_sender_name()
         is_group = group_id is not None
         if not is_group:
             return
         output_text = self.generate_fake_dox(
             sender_id,
-            sender_name,
             str(group_id)
         )
         wife_avatar = f"https://q4.qlogo.cn/headimg_dl?dst_uin={sender_id}&spec=640"
@@ -83,17 +81,22 @@ class NullDoxPlugin(Star):
         yield event.chain_result(chain)
 
     # 生成假数据
-    def generate_fake_dox(self, sender_id:str, sender_name:str|None = None, group_id:str|None = None):
+    def generate_fake_dox(self, sender_id: str, group_id: str | None = None):
         """
         生成完整的假开盒信息
-        target_id: 目标账号（可以是任意字符串）
+        sender_id: 发送者账号
+        group_id: 群号（可选）
         """
-        output = f"身份检索完毕\n账号：{sender_id}\n"
-        if sender_name:
-            output += f"名称：{sender_name}\n"
+        output = f"🔍 身份检索完毕\n"
+        output += f"🆔 账号：{sender_id}\n"
+
         if group_id:
-            output += f"退出群聊：{group_id}\n"
-        output += f"手机：{self._generate_phone()}\nIP地址：{self._generate_ip()}\n物理地址：{self._generate_location()}"
+            output += f"🚪 退出群聊：{group_id}\n"
+
+        output += f"📱 手机：{self._generate_phone()}\n"
+        output += f"🌐 IP地址：{self._generate_ip()}\n"
+        output += f"📍 物理地址：{self._generate_location()}"
+
         return output.strip()
 
     def _load_location_data(self) -> None:
