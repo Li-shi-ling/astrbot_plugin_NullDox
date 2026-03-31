@@ -11,10 +11,8 @@ from astrbot.core.star.filter import HandlerFilter
 from astrbot.core.star.register.star_handler import get_handler_or_create
 from astrbot.core.star.star_handler import EventType
 
-
 class DecreaseTypeFilter(HandlerFilter):
     """检查活跃的群成员减少通知事件"""
-
     def filter(self, event: AstrMessageEvent, cfg: AstrBotConfig) -> bool:
         raw_message = getattr(event.message_obj, "raw_message", None)
         if not isinstance(raw_message, dict):
@@ -25,17 +23,13 @@ class DecreaseTypeFilter(HandlerFilter):
             and raw_message.get("sub_type") == "leave"
         )
 
-
 def register_decrease_type(**kwargs):
     """注册一个用于群成员离开事件的自定义过滤器"""
-
     def decorator(awaitable):
         handler_md = get_handler_or_create(awaitable, EventType.AdapterMessageEvent)
         handler_md.event_filters.append(DecreaseTypeFilter())
         return awaitable
-
     return decorator
-
 
 @register(
     "NullDox",
@@ -49,8 +43,8 @@ class NullDoxPlugin(Star):
     def __init__(self, context: Context, config: AstrBotConfig | None = None):
         super().__init__(context)
         self.config = config or {}
-        self.location_data: dict = {}      # 地理位置数据
-        self.location_pool: list[str] = [] # 地理位置池
+        self.location_data: dict = {}
+        self.location_pool: list[str] = []
         self._load_location_data()
 
     @filter.command("盒")
@@ -106,6 +100,7 @@ class NullDoxPlugin(Star):
         ]
         yield event.chain_result(chain)
 
+    # 生成假数据
     def generate_fake_dox(self, sender_id: str, group_id: str | None = None):
         """
         生成完整的假开盒信息
@@ -124,6 +119,7 @@ class NullDoxPlugin(Star):
 
         return output.strip()
 
+    # 加载地理位置JSON数据
     def _load_location_data(self) -> None:
         """加载地理位置JSON数据，并展开为扁平列表"""
         data_path = Path(__file__).resolve().parent / "china_clean_v2.json"
@@ -153,6 +149,7 @@ class NullDoxPlugin(Star):
             self.location_data = {}
             self.location_pool = []
 
+    # 将嵌套的地理位置JSON展开为可读地址列表
     def _flatten_locations(self, data: dict) -> list[str]:
         """将嵌套的地理位置JSON展开为可读地址列表"""
         locations: list[str] = []
@@ -184,6 +181,7 @@ class NullDoxPlugin(Star):
 
         return locations
 
+    # 验证QQ号格式是否正确
     def _validate_qq(self, qq: str) -> bool:
         """验证QQ号格式是否正确"""
         if not qq or not isinstance(qq, str):
@@ -193,6 +191,7 @@ class NullDoxPlugin(Star):
             return False
         return True
 
+    # 检查当前用户是否有权限使用该命令
     def _is_user_allowed(self, user_id: str | None) -> bool:
         """检查当前用户是否有权限使用该命令"""
         if not user_id:
@@ -212,6 +211,7 @@ class NullDoxPlugin(Star):
             return not is_in_list
         return True
 
+    # 检查是否允许在该群组中监听成员离开事件
     def _is_group_allowed(
         self, group_id: int | str | None, unified_msg_origin: str | None = None
     ) -> bool:
@@ -256,6 +256,7 @@ class NullDoxPlugin(Star):
             return not is_in_list
         return True
 
+    # 生成一个虚假的手机号码
     def _generate_phone(self) -> str:
         """生成一个虚假的手机号码"""
         prefixes = [
@@ -268,6 +269,7 @@ class NullDoxPlugin(Star):
         suffix = "".join(str(random.randint(0, 9)) for _ in range(8))
         return f"{prefix}{suffix}"
 
+    # 生成一个虚假的IP地址
     def _generate_ip(self) -> str:
         """生成一个虚假的IP地址"""
         first = random.choice([
@@ -279,16 +281,19 @@ class NullDoxPlugin(Star):
         fourth = random.randint(1, 254)
         return f"{first}.{second}.{third}.{fourth}"
 
+    # 生成一个随机的虚假地理位置
     def _generate_location(self) -> str:
         """生成一个随机的虚假地理位置"""
         if self.location_pool:
             return random.choice(self.location_pool)
         return "四川省成都市金牛区"  # 默认地址
 
+    # 异步插件初始化钩子
     async def initialize(self):
-        """可选的异步插件初始化钩子"""
+        """异步插件初始化钩子"""
         pass
 
+    # 异步插件清理钩子
     async def terminate(self):
         """可选的异步插件清理钩子"""
         pass
