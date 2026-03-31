@@ -1,4 +1,4 @@
-﻿{
+{
   "user_list_mode": {
     "description": "主动命令账号过滤模式",
     "type": "string",
