@@ -95,3 +95,5 @@ A: 请确保：
 ## 👤 作者
 - **lishining**
 - **QQ群:1083090761**
+
+[![Moe Counter](https://count.getloli.com/get/@li-shi-ling?theme=minecraft)](https://github.com/Li-shi-ling/astrbot_plugin_NullDox)
